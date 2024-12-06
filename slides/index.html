@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>My Presentation</title>
+    <link rel="stylesheet" href="../node_modules/reveal.js/dist/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../node_modules/reveal.js/dist/theme/white.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../node_modules/reveal.js/plugin/highlight/monokai.css"
+    />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- #1 -->
+        <section>
+          <h1>Рефакторинг на практике</h1>
+          <p>Примеры рефакторинга реальных приложений.</p>
+        </section>
+
+        <section>
+          <h2>Example Code</h2>
+          <pre>
+            <code class="language-javascript">
+// Your code here
+function greet() {
+  console.log('Hello, world!');
+}
+            </code>
+          </pre>
+        </section>
+        <section>
+          <h2>Mermaid Diagram</h2>
+          <div class="mermaid">graph TD; A-->B; A-->C; B-->D; C-->D;</div>
+        </section>
+        <section data-transition="zoom">
+          <h2>Слайд с анимацией</h2>
+        </section>
+      </div>
+    </div>
+    <script src="../node_modules/reveal.js/dist/reveal.js"></script>
+    <script src="../node_modules/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="../node_modules/mermaid/dist/mermaid.min.js"></script>
+    <script src="../node_modules/mermaid/dist/mermaid.min.js"></script>
+
+    <script>
+      Reveal.initialize({
+        plugins: [RevealHighlight],
+      });
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+  </body>
+</html>

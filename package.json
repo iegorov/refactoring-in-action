@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "mermaid": "^11.4.1",
+    "reveal.js": "^5.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
