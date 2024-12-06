@@ -2,15 +2,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>My Presentation</title>
-    <link rel="stylesheet" href="../node_modules/reveal.js/dist/reveal.css" />
+    <title>Refactoring in action</title>
     <link
       rel="stylesheet"
-      href="../node_modules/reveal.js/dist/theme/white.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css"
     />
     <link
       rel="stylesheet"
-      href="../node_modules/reveal.js/plugin/highlight/monokai.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/white.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/monokai.min.css"
     />
   </head>
   <body>
@@ -42,16 +45,26 @@ function greet() {
         </section>
       </div>
     </div>
-    <script src="../node_modules/reveal.js/dist/reveal.js"></script>
-    <script src="../node_modules/reveal.js/plugin/highlight/highlight.js"></script>
-    <script src="../node_modules/mermaid/dist/mermaid.min.js"></script>
-    <script src="../node_modules/mermaid/dist/mermaid.min.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/highlight.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
+    ></script>
 
     <script>
-      Reveal.initialize({
-        plugins: [RevealHighlight],
+      document.addEventListener('DOMContentLoaded', function () {
+        Reveal.initialize({
+          plugins: [RevealHighlight],
+        });
+        mermaid.initialize({ startOnLoad: true });
       });
-      mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
 </html>

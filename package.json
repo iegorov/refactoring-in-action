@@ -1,9 +1,14 @@
 {
-  "dependencies": {
-    "mermaid": "^11.4.1",
-    "reveal.js": "^5.1.0"
+  "name": "refactoring-in-action",
+  "version": "1.0.0",
+  "description": "Slides for a talk on practical refactoring in real-world applications.",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "prettier": "^3.4.2"
-  }
+  },
+  "author": "Ivan Egorov",
+  "license": "GPL-3.0"
 }
