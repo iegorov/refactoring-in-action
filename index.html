@@ -15,6 +15,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/highlight/monokai.min.css"
     />
+    <style>
+      .align-left {
+        text-align: left;
+      }
+    </style>
   </head>
   <body>
     <div class="reveal">
@@ -35,10 +40,17 @@
           data-include="slides/01-modules/3-slide-modules.html"
         ></section>
 
-        <section>
-          <h2>Mermaid Diagram</h2>
-          <div class="mermaid">graph TD; A-->B; A-->C; B-->D; C-->D;</div>
-        </section>
+        <!-- Low Coupling & High Cohesion -->
+        <section
+          data-include="slides/02-low-coupling-high-cohesion/1-slide-low-coupling-high-cohesion.html"
+        ></section>
+        <!-- TODO: добавить примеры -->
+
+        <!-- DTO -->
+        <section data-include="slides/03-dto/1-slide-dto.html"></section>
+        <section data-include="slides/03-dto/2-slide-dto.html"></section>
+        <section data-include="slides/03-dto/3-slide-dto.html"></section>
+        <section data-include="slides/03-dto/4-slide-dto.html"></section>
 
         <!-- DRY -->
         <section>
@@ -159,46 +171,30 @@
           </textarea>
         </section>
 
-        <!-- DTO -->
-        <section>
-          <h2>DTO</h2>
-          <pre>
-            <code class="language-typescript">
-// Your code here
-function greet() {
-  console.log('Hello, world!');
-}
-            </code>
-          </pre>
-        </section>
-        <!-- Model-View-Presenter -->
-        <section>
-          <h2>Model-View-Presenter</h2>
-          <pre>
-            <code class="language-typescript">
-// Your code here
-function greet() {
-  console.log('Hello, world!');
-}
-            </code>
-          </pre>
-        </section>
-        <!-- BLoC -->
-        <section>
-          <h2>BLoC</h2>
-          <pre>
-            <code class="language-typescript">
-// Your code here
-function greet() {
-  console.log('Hello, world!');
-}
-            </code>
-          </pre>
-        </section>
+        <!-- Guard expression -->
+        <section
+          data-include="slides/05-guard-expression/1-slide-guard-expression.html"
+        ></section>
+        <!-- TODO: добавить примеры -->
 
-        <section data-transition="zoom">
-          <h2>Слайд с анимацией</h2>
-        </section>
+        <!-- Circular dependency -->
+        <section
+          data-include="slides/06-circular-dependency/1-slice-circular-dependency.html"
+        ></section>
+        <section
+          data-include="slides/06-circular-dependency/2-slice-circular-dependency.html"
+        ></section>
+
+        <!-- Container-Presentation -->
+        <section
+          data-include="slides/07-container-presentation/1-slide-container-presentation.html"
+        ></section>
+        <section
+          data-include="slides/07-container-presentation/2-slide-container-presentation.html"
+        ></section>
+        <section
+          data-include="slides/07-container-presentation/3-slide-container-presentation.html"
+        ></section>
       </div>
     </div>
     <script

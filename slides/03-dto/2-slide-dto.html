@@ -1,0 +1,24 @@
+<div data-markdown>
+  <textarea data-template>
+    ## Проблема
+    ```js
+      $scope.loading = true;
+      const data = {
+        ...$scope.data,
+        deliveryMode: $scope.data.deliveryMode.code,
+      };
+      if ($scope.selectedPVZ?.code) {
+        data.pvzSystemName = $scope.selectedPVZ.code;
+      }
+      $scope.data.problemUuid = problemUuid;
+      $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+      if (!$scope.priorApprovalDto.show) {
+        data.priorApprovalDto = null;
+      } else if (data.priorApprovalDto.address) {
+        data.priorApprovalDto.address = data.priorApprovalDto.address.name
+        ? data.priorApprovalDto.address.name
+        : data.priorApprovalDto.address;
+      }
+    ```
+  </textarea>
+</div>

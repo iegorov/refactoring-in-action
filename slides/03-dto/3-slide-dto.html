@@ -1,0 +1,21 @@
+<div data-markdown>
+  <textarea data-template>
+    ## Решение
+    ```js
+        $scope.loading = true;
+        $scope.data.problemUuid = problemUuid;
+        $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+
+        const { data, selectedPVZ, priorApprovalDto } = $scope;
+        const priorApproval = { ...priorApprovalDto, ...data.priorApprovalDto };
+        const selectedMassAgreementPreviews = $scope.massAgreementPreviewsGridOptions.api.getSelectedRows();
+
+        const negativeSolutionRequestDto = new window.DTO.NegativeSolutionRequestDto(
+          data,
+          selectedPVZ,
+          priorApproval,
+          selectedMassAgreementPreviews
+        );
+    ```
+  </textarea>
+</div>

@@ -1,0 +1,205 @@
+<div data-markdown>
+  <textarea data-template>
+    ## DTO
+    ```bash
+      'use strict';
+
+      window.DTO = window.DTO || {};
+      (function defineNegativeSolutionRequestDto() {
+        class NegativeSolutionRequestDto {
+          /**
+          * Идентификатор проблемы
+          * @type {string}
+          */
+          problemUuid;
+
+          /**
+          * Тип отрицательного ответа курьеру
+          * @type {string}
+          */
+          answerKind;
+
+          /**
+          * Ложность проблемы
+          * @type {boolean}
+          */
+          faulty;
+
+          /**
+          * Дата следующего прозвона
+          * @type {string}
+          */
+          nextCallDate;
+
+          /**
+          * Время следующего прозвона
+          * @type {string}
+          */
+          nextCallTime;
+
+          /**
+          * Комментарий для оператора
+          * @type {string}
+          */
+          notesToOperator;
+
+          /**
+          * Комментарий для курьера
+          * @type {string}
+          */
+          notesToCourier;
+
+          /**
+          * Код причины недозвона/отказа от доставки
+          * @type {string}
+          */
+          reason;
+
+          /**
+          * Дата доставки
+          * @type {string}
+          */
+          deliveryDate;
+
+          /**
+          * Время доставки - начало
+          * @type {string}
+          */
+          deliveryStartTime;
+
+          /**
+          * Время доставки до которого нужно выполнить
+          * @type {string}
+          */
+          deliveryEndTime;
+
+          /**
+          * Признак, есть ли обеденный перерыв
+          * @type {boolean}
+          */
+          lunchBreak;
+
+          /**
+          * Обед клиента от
+          * @type {string}
+          */
+          lunchStartTime;
+
+          /**
+          * Обед клиента до
+          * @type {string}
+          */
+          lunchEndTime;
+
+          /**
+          * Адрес заказа
+          * @type {string}
+          */
+          address;
+
+          /**
+          * Пункт выдачи заказа до склада
+          * @type {string}
+          */
+          pvzSystemName;
+
+          /**
+          * Режим доставки до склада/ До двери
+          * @type {string}
+          */
+          deliveryMode;
+
+          /**
+          * Предварительное согласование
+          * @type {?{
+          *   deliveryStartTime: string,
+          *   deliveryEndTime: string,
+          *   lunchBreak: boolean,
+          *   lunchStartTime: string,
+          *   lunchEndTime: string,
+          *   address: string
+          * }}
+          */
+          priorApproval = null;
+
+          /**
+          * Данные для массового согласования проблем
+          * @type {?{
+          *   problemUuids: string[],
+          *   orderUuids: string[]
+          * }}
+          */
+          massAgreementRequest = null;
+
+          constructor(data, selectedPVZ, priorApproval, selectedMassAgreementPreviews) {
+            // Создаем глубокую копию data
+            const {
+              problemUuid,
+              answerKind,
+              faulty,
+              nextCallDate,
+              nextCallTime,
+              notesToOperator,
+              notesToCourier,
+              reason,
+              deliveryDate,
+              deliveryStartTime,
+              deliveryEndTime,
+              lunchBreak,
+              lunchStartTime,
+              lunchEndTime,
+              address,
+              pvzSystemName,
+              deliveryMode,
+            } = data;
+
+            this.problemUuid = problemUuid;
+            this.answerKind = answerKind;
+            this.faulty = faulty;
+            this.nextCallDate = nextCallDate;
+            this.nextCallTime = nextCallTime;
+            this.notesToOperator = notesToOperator;
+            this.notesToCourier = notesToCourier;
+            this.reason = reason;
+            this.deliveryDate = deliveryDate;
+            this.deliveryStartTime = deliveryStartTime;
+            this.deliveryEndTime = deliveryEndTime;
+            this.lunchBreak = lunchBreak;
+            this.lunchStartTime = lunchStartTime;
+            this.lunchEndTime = lunchEndTime;
+            this.address = address;
+            this.pvzSystemName = pvzSystemName;
+            this.deliveryMode = deliveryMode;
+
+            // Устанавливаем pvzSystemName, если выбран PVZ
+            if (selectedPVZ?.code) {
+              this.pvzSystemName = selectedPVZ.code;
+            }
+
+            // Обрабатываем priorApproval
+            if (!priorApproval.show) {
+              this.priorApproval = null;
+            } else if (priorApproval?.address) {
+              this.priorApproval = {
+                address: priorApproval.address.name || priorApproval.address,
+              };
+            }
+
+            // Обрабатываем массовые соглашения
+            if (selectedMassAgreementPreviews?.length) {
+              const problemUuids = selectedMassAgreementPreviews.filter((i) => i.isProblem).map((i) => i.uuid);
+              const orderUuids = selectedMassAgreementPreviews.filter((i) => i.isOrder).map((i) => i.uuid);
+
+              this.massAgreementRequest = {
+                problemUuids,
+                orderUuids,
+              };
+            }
+          }
+        }
+
+        window.DTO.NegativeSolutionRequestDto = NegativeSolutionRequestDto;
+      })();
+    ```
+  </textarea>
+</div>
