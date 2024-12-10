@@ -28,6 +28,10 @@
         <section
           data-include="slides/01-modules/1-slide-modules.html"
         ></section>
+        <section
+          data-markdown
+          data-include="slides/01-modules/2-slide-modules.html"
+        ></section>
 
         <section>
           <h2>Mermaid Diagram</h2>
@@ -223,15 +227,29 @@ function greet() {
         mermaid.initialize({ startOnLoad: true });
       });
 
-      // Load external slides
-      document.querySelectorAll('section[data-include]').forEach((section) => {
-        fetch(section.getAttribute('data-include'))
-          .then((response) => response.text())
-          .then((html) => {
-            section.innerHTML = html;
-            Reveal.sync();
+      // Собираем все секции с атрибутом data-include
+      const sections = document.querySelectorAll('section[data-include]');
+
+      // Получаем массив URL из атрибутов data-include
+      const urls = Array.from(sections).map((section) =>
+        section.getAttribute('data-include'),
+      );
+
+      // Запрашиваем все файлы параллельно
+      Promise.all(
+        urls.map((url) => fetch(url).then((response) => response.text())),
+      )
+        .then((htmlContents) => {
+          // Вставляем содержимое в соответствующие секции
+          sections.forEach((section, index) => {
+            section.innerHTML = htmlContents[index];
           });
-      });
+          // Синхронизируем Reveal.js
+          Reveal.sync();
+        })
+        .catch((error) => {
+          console.error('Error loading sections:', error);
+        });
     </script>
   </body>
 </html>
