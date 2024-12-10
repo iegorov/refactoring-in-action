@@ -15,6 +15,9 @@ The presentation focuses on practical techniques for refactoring real-world appl
 - How to make complex systems easier to understand and maintain.
 - Best practices for sustainable code refactoring.
 
+## View the Presentation Online
+You can view the presentation online at [https://iegorov.github.io/refactoring-in-action/](https://iegorov.github.io/refactoring-in-action/).
+
 ## How to Run the Slides
 1. Clone this repository:
    ```bash
@@ -24,12 +27,8 @@ The presentation focuses on practical techniques for refactoring real-world appl
 2. Install dependencies:
    ```bash
    npm install
-   ```
-3. Start the local server to view the presentation:
-   ```bash
-   npx reveal.js serve slides
-   ```
-4. Open your browser at `http://localhost:8000`.
+
+3. Start a local server and open `index.html` in your browser. For example, you can use the Live Server extension in VSCode.
 
 ---
 
