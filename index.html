@@ -215,10 +215,6 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script
-      defer
-      src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
-    ></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
@@ -242,25 +238,7 @@
 
           Reveal.initialize({
             plugins: [RevealMarkdown, RevealHighlight],
-            callback: function () {
-              mermaid.initialize({
-                startOnLoad: true,
-                theme: 'default',
-                securityLevel: 'loose',
-                themeVariables: {
-                  fontSize: '16px'
-                }
-              });
-              // Принудительно перерисовываем все диаграммы
-              document.querySelectorAll('.mermaid').forEach((element) => {
-                mermaid.init(undefined, element);
-              });
-            },
           });
-
-          mermaid.initialize({ startOnLoad: true });
-          mermaid.init();
-          mermaid.contentLoaded();
         });
       });
     </script>
