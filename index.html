@@ -19,16 +19,145 @@
   <body>
     <div class="reveal">
       <div class="slides">
-        <!-- #1 -->
         <section>
           <h1>Рефакторинг на практике</h1>
           <p>Примеры рефакторинга реальных приложений.</p>
         </section>
 
+        <!-- Modules -->
+        <section
+          data-include="slides/01-modules/1-slide-modules.html"
+        ></section>
+
         <section>
-          <h2>Example Code</h2>
+          <h2>Mermaid Diagram</h2>
+          <div class="mermaid">graph TD; A-->B; A-->C; B-->D; C-->D;</div>
+        </section>
+
+        <!-- DRY -->
+        <section>
+          <h2>DRY (Don't Repeat Yourself)</h2>
+          <blockquote>Принцип минимизации дублирования кода</blockquote>
+
+          Исключение дублирования позволяет снизить сложность и упростить
+          поддержку кода.
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+            ## DRY. Анализ
+            ```bash
+              couriersalaryfront/
+              ├── src/
+              │   ├── app/
+              │   │   ├── pages/
+              │   │   │   ├── adjustments/
+              │   │   │   │   └── components/
+              │   │   │   │       └── adjustment-filter/
+              │   │   │   │           └── multi-select-services/
+              │   │   │   │               ├── brigade-control-multi-select.service.ts
+              │   │   │   │               ├── city-control-multi-select.service.ts
+              │   │   │   │               ├── courier-control-multi-select.service.ts
+              │   │   │   │               └── courier-group-control-multi-select.service.ts
+              │   │   │   │
+              │   │   │   └── couriers-salary/
+              │   │   │       └── components/
+              │   │   │           └── courier-salary-filter/
+              │   │   │               └── multi-select-services/
+              │   │   │                   ├── brigade-control-multi-select.service.ts
+              │   │   │                   ├── city-control-multi-select.service.ts
+              │   │   │                   ├── courier-control-multi-select.service.ts
+              │   │   │                   ├── courier-group-control-multi-select.service.ts
+              │   │   │                   └── subdivision-control-multi-select.service.ts
+            ```
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+            ## DRY. Анализ
+            BrigadeControlMultiSelectService
+            ```ts
+              getList = (text$: Observable<string>) => {
+                return text$.pipe(
+                  debounceTime(200),
+                  distinctUntilChanged(),
+                  filter((text) => text.length > 0),
+                  switchMap((query) =>
+                    this.adjustmentsHttp.typeaheadData(query, 'brigades', [
+                      {
+                        field: 'cityUuids',
+                        values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+                      },
+                      {
+                        field: 'officeUuids',
+                        values: this.filterFormGroup.get('officeUuids').value?.map((item) => item.code),
+                      },
+                    ])
+                  )
+                );
+              };
+            ```
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+            ## DRY. Анализ
+            SubdivisionControlMultiSelectService
+            ```ts
+                getList = (text$: Observable<string>) => {
+                  return text$.pipe(
+                    debounceTime(200),
+                    filter((text) => text.length > 0),
+                    switchMap((query) =>
+                      this.courierSalaryHttp.typeaheadData(query, 'offices', [
+                        {
+                          field: 'cityUuids',
+                          values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+                        },
+                      ])
+                    )
+                  );
+                };
+            ```
+          </textarea>
+        </section>
+
+        <section data-markdown>
+          <textarea data-template>
+            ## DRY. Решение
+            AutocompleteService
+            ```ts
+                  getDependentTypeahead(
+                    formGroup: FormGroup,
+                    dictionaryName: string,
+                    dependentFields: string[]
+                  ): (text$: Observable<string>) => Observable<CodeName<string>[] | OfficeAutocompleteItem[]> {
+                    return (text$: Observable<string>) => {
+                      return text$.pipe(
+                        debounceTime(200),
+                        filter((text) => text.length > 0),
+                        switchMap((query) => {
+                          const fields = dependentFields.map((fieldName) => ({
+                            field: fieldName,
+                            values: this.extractFieldValues(formGroup.get(fieldName)?.value),
+                          }));
+
+                          return this.getTypeaheadData(TypeaheadApiPath, dictionaryName, query, fields);
+                        })
+                      );
+                    };
+                  }
+            ```
+          </textarea>
+        </section>
+
+        <!-- DTO -->
+        <section>
+          <h2>DTO</h2>
           <pre>
-            <code class="language-javascript">
+            <code class="language-typescript">
 // Your code here
 function greet() {
   console.log('Hello, world!');
@@ -36,10 +165,31 @@ function greet() {
             </code>
           </pre>
         </section>
+        <!-- Model-View-Presenter -->
         <section>
-          <h2>Mermaid Diagram</h2>
-          <div class="mermaid">graph TD; A-->B; A-->C; B-->D; C-->D;</div>
+          <h2>Model-View-Presenter</h2>
+          <pre>
+            <code class="language-typescript">
+// Your code here
+function greet() {
+  console.log('Hello, world!');
+}
+            </code>
+          </pre>
         </section>
+        <!-- BLoC -->
+        <section>
+          <h2>BLoC</h2>
+          <pre>
+            <code class="language-typescript">
+// Your code here
+function greet() {
+  console.log('Hello, world!');
+}
+            </code>
+          </pre>
+        </section>
+
         <section data-transition="zoom">
           <h2>Слайд с анимацией</h2>
         </section>
@@ -55,15 +205,32 @@ function greet() {
     ></script>
     <script
       defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"
+      integrity="sha512-4exkEeyVuaWUFKozXl6L3UCugl6ai1cKnrVFkWUstdrNB2sDxxmPEaHBzTlYm9wX78EjPzEBG0s8k37oPeUFIw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      defer
       src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"
     ></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         Reveal.initialize({
-          plugins: [RevealHighlight],
+          plugins: [RevealMarkdown, RevealHighlight],
         });
         mermaid.initialize({ startOnLoad: true });
+      });
+
+      // Load external slides
+      document.querySelectorAll('section[data-include]').forEach((section) => {
+        fetch(section.getAttribute('data-include'))
+          .then((response) => response.text())
+          .then((html) => {
+            section.innerHTML = html;
+            Reveal.sync();
+          });
       });
     </script>
   </body>
