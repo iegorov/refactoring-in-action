@@ -1,0 +1,26 @@
+<div data-markdown>
+  <textarea data-template>
+    ## Как было с index.ts
+    ```bash
+      src/
+      └── app/
+          └── pages/
+              └── adjustments/
+                  └── components/
+                      ├── index.ts  (экспортирует все компоненты)
+                      │   - AdjustmentGridComponent
+                      │   - AdjustmentWrapperComponent
+                      │   - AdjustmentFilterComponent
+                      │
+                      ├── adjustment-grid/
+                      │   └── adjustment-grid.component.ts
+                      │
+                      ├── adjustment-wrapper/
+                      │   └── adjustment-wrapper.component.ts
+                      │
+                      └── adjustment-filter/
+                          └── adjustment-filter.component.ts
+    ```
+    Решение: если модуль ничего не экспортирует, то не нужно создавать index.ts
+  </textarea>
+</div>

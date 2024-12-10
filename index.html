@@ -29,8 +29,10 @@
           data-include="slides/01-modules/1-slide-modules.html"
         ></section>
         <section
-          data-markdown
           data-include="slides/01-modules/2-slide-modules.html"
+        ></section>
+        <section
+          data-include="slides/01-modules/3-slide-modules.html"
         ></section>
 
         <section>
@@ -220,32 +222,31 @@ function greet() {
     ></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        Reveal.initialize({
-          plugins: [RevealMarkdown, RevealHighlight],
-        });
-        mermaid.initialize({ startOnLoad: true });
-      });
+      document
+        .addEventListener('DOMContentLoaded', function () {
+          // Собираем все секции с атрибутом data-include
+          const sections = document.querySelectorAll('section[data-include]');
 
-      // Собираем все секции с атрибутом data-include
-      const sections = document.querySelectorAll('section[data-include]');
+          // Получаем массив URL из атрибутов data-include
+          const urls = Array.from(sections).map((section) =>
+            section.getAttribute('data-include'),
+          );
 
-      // Получаем массив URL из атрибутов data-include
-      const urls = Array.from(sections).map((section) =>
-        section.getAttribute('data-include'),
-      );
+          // Запрашиваем все файлы параллельно
+          Promise.all(
+            urls.map((url) => fetch(url).then((response) => response.text())),
+          ).then((htmlContents) => {
+            // Вставляем содержимое в соответствующие секции
+            sections.forEach((section, index) => {
+              section.innerHTML = htmlContents[index];
+            });
+            // Синхронизируем Reveal.js
 
-      // Запрашиваем все файлы параллельно
-      Promise.all(
-        urls.map((url) => fetch(url).then((response) => response.text())),
-      )
-        .then((htmlContents) => {
-          // Вставляем содержимое в соответствующие секции
-          sections.forEach((section, index) => {
-            section.innerHTML = htmlContents[index];
+            Reveal.initialize({
+              plugins: [RevealMarkdown, RevealHighlight],
+            });
+            mermaid.initialize({ startOnLoad: true });
           });
-          // Синхронизируем Reveal.js
-          Reveal.sync();
         })
         .catch((error) => {
           console.error('Error loading sections:', error);
