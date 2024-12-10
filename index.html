@@ -177,23 +177,26 @@
         ></section>
         <!-- TODO: добавить примеры -->
 
-        <!-- Circular dependency -->
+        <!-- Single Responsibility Principle (SOLID) -->
         <section
-          data-include="slides/06-circular-dependency/1-slice-circular-dependency.html"
+          data-include="slides/06-single-responsibility/1-single-responsibility.html"
         ></section>
         <section
-          data-include="slides/06-circular-dependency/2-slice-circular-dependency.html"
+          data-include="slides/06-single-responsibility/2-single-responsibility.html"
+        ></section>
+        <section
+          data-include="slides/06-single-responsibility/3-single-responsibility.html"
         ></section>
 
-        <!-- Container-Presentation -->
+        <!-- Circular dependency -->
         <section
-          data-include="slides/07-container-presentation/1-slide-container-presentation.html"
+          data-include="slides/07-circular-dependency/1-circular-dependency.html"
         ></section>
         <section
-          data-include="slides/07-container-presentation/2-slide-container-presentation.html"
+          data-include="slides/07-circular-dependency/2-circular-dependency.html"
         ></section>
         <section
-          data-include="slides/07-container-presentation/3-slide-container-presentation.html"
+          data-include="slides/07-circular-dependency/3-circular-dependency.html"
         ></section>
       </div>
     </div>
@@ -218,35 +221,48 @@
     ></script>
 
     <script>
-      document
-        .addEventListener('DOMContentLoaded', function () {
-          // Собираем все секции с атрибутом data-include
-          const sections = document.querySelectorAll('section[data-include]');
+      document.addEventListener('DOMContentLoaded', function () {
+        // Собираем все секции с атрибутом data-include
+        const sections = document.querySelectorAll('section[data-include]');
 
-          // Получаем массив URL из атрибутов data-include
-          const urls = Array.from(sections).map((section) =>
-            section.getAttribute('data-include'),
-          );
+        // Получаем массив URL из атрибутов data-include
+        const urls = Array.from(sections).map((section) =>
+          section.getAttribute('data-include'),
+        );
 
-          // Запрашиваем все файлы параллельно
-          Promise.all(
-            urls.map((url) => fetch(url).then((response) => response.text())),
-          ).then((htmlContents) => {
-            // Вставляем содержимое в соответствующие секции
-            sections.forEach((section, index) => {
-              section.innerHTML = htmlContents[index];
-            });
-            // Синхронизируем Reveal.js
-
-            Reveal.initialize({
-              plugins: [RevealMarkdown, RevealHighlight],
-            });
-            mermaid.initialize({ startOnLoad: true });
+        // Запрашиваем все файлы параллельно
+        Promise.all(
+          urls.map((url) => fetch(url).then((response) => response.text())),
+        ).then((htmlContents) => {
+          // Вставляем содержимое в соответствующие секции
+          sections.forEach((section, index) => {
+            section.innerHTML = htmlContents[index];
           });
-        })
-        .catch((error) => {
-          console.error('Error loading sections:', error);
+          // Синхронизируем Reveal.js
+
+          Reveal.initialize({
+            plugins: [RevealMarkdown, RevealHighlight],
+            callback: function () {
+              mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                securityLevel: 'loose',
+                themeVariables: {
+                  fontSize: '16px'
+                }
+              });
+              // Принудительно перерисовываем все диаграммы
+              document.querySelectorAll('.mermaid').forEach((element) => {
+                mermaid.init(undefined, element);
+              });
+            },
+          });
+
+          mermaid.initialize({ startOnLoad: true });
+          mermaid.init();
+          mermaid.contentLoaded();
         });
+      });
     </script>
   </body>
 </html>
