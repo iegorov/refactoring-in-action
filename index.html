@@ -44,7 +44,9 @@
         <section
           data-include="slides/02-low-coupling-high-cohesion/1-slide-low-coupling-high-cohesion.html"
         ></section>
-        <!-- TODO: добавить примеры -->
+        <section
+          data-include="slides/02-low-coupling-high-cohesion/2-slide-low-coupling-high-cohesion.html"
+        ></section>
 
         <!-- DTO -->
         <section data-include="slides/03-dto/1-slide-dto.html"></section>
@@ -52,140 +54,33 @@
         <section data-include="slides/03-dto/3-slide-dto.html"></section>
         <section data-include="slides/03-dto/4-slide-dto.html"></section>
 
+        <!-- Single Responsibility Principle (SOLID) -->
+        <section
+          data-include="slides/04-single-responsibility/1-single-responsibility.html"
+        ></section>
+        <section
+          data-include="slides/04-single-responsibility/2-single-responsibility.html"
+        ></section>
+        <section
+          data-include="slides/04-single-responsibility/3-single-responsibility.html"
+        ></section>
+
         <!-- DRY -->
-        <section>
-          <h2>DRY (Don't Repeat Yourself)</h2>
-          <blockquote>Принцип минимизации дублирования кода</blockquote>
-
-          Исключение дублирования позволяет снизить сложность и упростить
-          поддержку кода.
-        </section>
-
-        <section data-markdown>
-          <textarea data-template>
-            ## DRY. Анализ
-            ```bash
-              couriersalaryfront/
-              ├── src/
-              │   ├── app/
-              │   │   ├── pages/
-              │   │   │   ├── adjustments/
-              │   │   │   │   └── components/
-              │   │   │   │       └── adjustment-filter/
-              │   │   │   │           └── multi-select-services/
-              │   │   │   │               ├── brigade-control-multi-select.service.ts
-              │   │   │   │               ├── city-control-multi-select.service.ts
-              │   │   │   │               ├── courier-control-multi-select.service.ts
-              │   │   │   │               └── courier-group-control-multi-select.service.ts
-              │   │   │   │
-              │   │   │   └── couriers-salary/
-              │   │   │       └── components/
-              │   │   │           └── courier-salary-filter/
-              │   │   │               └── multi-select-services/
-              │   │   │                   ├── brigade-control-multi-select.service.ts
-              │   │   │                   ├── city-control-multi-select.service.ts
-              │   │   │                   ├── courier-control-multi-select.service.ts
-              │   │   │                   ├── courier-group-control-multi-select.service.ts
-              │   │   │                   └── subdivision-control-multi-select.service.ts
-            ```
-          </textarea>
-        </section>
-
-        <section data-markdown>
-          <textarea data-template>
-            ## DRY. Анализ
-            BrigadeControlMultiSelectService
-            ```ts
-              getList = (text$: Observable<string>) => {
-                return text$.pipe(
-                  debounceTime(200),
-                  distinctUntilChanged(),
-                  filter((text) => text.length > 0),
-                  switchMap((query) =>
-                    this.adjustmentsHttp.typeaheadData(query, 'brigades', [
-                      {
-                        field: 'cityUuids',
-                        values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
-                      },
-                      {
-                        field: 'officeUuids',
-                        values: this.filterFormGroup.get('officeUuids').value?.map((item) => item.code),
-                      },
-                    ])
-                  )
-                );
-              };
-            ```
-          </textarea>
-        </section>
-
-        <section data-markdown>
-          <textarea data-template>
-            ## DRY. Анализ
-            SubdivisionControlMultiSelectService
-            ```ts
-                getList = (text$: Observable<string>) => {
-                  return text$.pipe(
-                    debounceTime(200),
-                    filter((text) => text.length > 0),
-                    switchMap((query) =>
-                      this.courierSalaryHttp.typeaheadData(query, 'offices', [
-                        {
-                          field: 'cityUuids',
-                          values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
-                        },
-                      ])
-                    )
-                  );
-                };
-            ```
-          </textarea>
-        </section>
-
-        <section data-markdown>
-          <textarea data-template>
-            ## DRY. Решение
-            AutocompleteService
-            ```ts
-                  getDependentTypeahead(
-                    formGroup: FormGroup,
-                    dictionaryName: string,
-                    dependentFields: string[]
-                  ): (text$: Observable<string>) => Observable<CodeName<string>[] | OfficeAutocompleteItem[]> {
-                    return (text$: Observable<string>) => {
-                      return text$.pipe(
-                        debounceTime(200),
-                        filter((text) => text.length > 0),
-                        switchMap((query) => {
-                          const fields = dependentFields.map((fieldName) => ({
-                            field: fieldName,
-                            values: this.extractFieldValues(formGroup.get(fieldName)?.value),
-                          }));
-
-                          return this.getTypeaheadData(TypeaheadApiPath, dictionaryName, query, fields);
-                        })
-                      );
-                    };
-                  }
-            ```
-          </textarea>
-        </section>
+        <section data-include="slides/05-dry/1-dry.html"></section>
+        <section data-include="slides/05-dry/2-dry.html"></section>
+        <section data-include="slides/05-dry/3-dry.html"></section>
+        <section data-include="slides/05-dry/4-dry.html"></section>
+        <section data-include="slides/05-dry/5-dry.html"></section>
 
         <!-- Guard expression -->
         <section
-          data-include="slides/05-guard-expression/1-slide-guard-expression.html"
-        ></section>
-        <!-- TODO: добавить примеры -->
-
-        <!-- Single Responsibility Principle (SOLID) -->
-        <section
-          data-include="slides/06-single-responsibility/1-single-responsibility.html"
+          data-include="slides/06-guard-expression/1-slide-guard-expression.html"
         ></section>
         <section
-          data-include="slides/06-single-responsibility/2-single-responsibility.html"
+          data-include="slides/06-guard-expression/2-slide-guard-expression.html"
         ></section>
         <section
-          data-include="slides/06-single-responsibility/3-single-responsibility.html"
+          data-include="slides/06-guard-expression/3-slide-guard-expression.html"
         ></section>
 
         <!-- Circular dependency -->
@@ -235,7 +130,6 @@
             section.innerHTML = htmlContents[index];
           });
           // Синхронизируем Reveal.js
-
           Reveal.initialize({
             plugins: [RevealMarkdown, RevealHighlight],
           });

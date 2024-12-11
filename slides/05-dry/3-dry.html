@@ -1,0 +1,27 @@
+<div data-markdown>
+  <textarea data-template>
+    ## DRY. Анализ
+    BrigadeControlMultiSelectService
+    ```ts
+      getList = (text$: Observable<string>) => {
+        return text$.pipe(
+          debounceTime(200),
+          distinctUntilChanged(),
+          filter((text) => text.length > 0),
+          switchMap((query) =>
+            this.adjustmentsHttp.typeaheadData(query, 'brigades', [
+              {
+                field: 'cityUuids',
+                values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+              },
+              {
+                field: 'officeUuids',
+                values: this.filterFormGroup.get('officeUuids').value?.map((item) => item.code),
+              },
+            ])
+          )
+        );
+      };
+    ```
+  </textarea>
+</div>

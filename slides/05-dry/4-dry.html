@@ -1,0 +1,22 @@
+<div data-markdown>
+  <textarea data-template>
+    ## DRY. Анализ
+    SubdivisionControlMultiSelectService
+    ```ts
+        getList = (text$: Observable<string>) => {
+          return text$.pipe(
+            debounceTime(200),
+            filter((text) => text.length > 0),
+            switchMap((query) =>
+              this.courierSalaryHttp.typeaheadData(query, 'offices', [
+                {
+                  field: 'cityUuids',
+                  values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+                },
+              ])
+            )
+          );
+        };
+    ```
+  </textarea>
+</div>

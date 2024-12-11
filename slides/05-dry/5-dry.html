@@ -1,0 +1,28 @@
+<div data-markdown>
+  <textarea data-template>
+    ## DRY. Решение
+    AutocompleteService
+    ```ts
+          getDependentTypeahead(
+            formGroup: FormGroup,
+            dictionaryName: string,
+            dependentFields: string[]
+          ): (text$: Observable<string>) => Observable<CodeName<string>[] | OfficeAutocompleteItem[]> {
+            return (text$: Observable<string>) => {
+              return text$.pipe(
+                debounceTime(200),
+                filter((text) => text.length > 0),
+                switchMap((query) => {
+                  const fields = dependentFields.map((fieldName) => ({
+                    field: fieldName,
+                    values: this.extractFieldValues(formGroup.get(fieldName)?.value),
+                  }));
+
+                  return this.getTypeaheadData(TypeaheadApiPath, dictionaryName, query, fields);
+                })
+              );
+            };
+          }
+    ```
+  </textarea>
+</div>

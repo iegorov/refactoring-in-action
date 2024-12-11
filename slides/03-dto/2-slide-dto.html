@@ -2,6 +2,7 @@
   <textarea data-template>
     ## Проблема
     ```js
+    $scope.ok = () => {
       $scope.loading = true;
       const data = {
         ...$scope.data,
@@ -19,6 +20,10 @@
         ? data.priorApprovalDto.address.name
         : data.priorApprovalDto.address;
       }
+      problemDetailService
+          .saveNegativeSolution(negativeSolutionRequestDto)
+      //...
+    }
     ```
   </textarea>
 </div>

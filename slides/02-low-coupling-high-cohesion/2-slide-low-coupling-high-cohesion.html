@@ -1,0 +1,22 @@
+<section>
+  <h2>SharedHttpService</h2>
+
+  <p class="align-left">
+    <strong>Проблема:</strong><br />
+    68 использований в других сервисах и компонентах.
+  </p>
+
+  <p class="align-left">
+    <strong>Решение:</strong>
+    Вынести часть методов в сервисы тесно связанные со страницами (модулями):
+    <ul>
+      <li>courier-schedule-http.service.ts</li>
+      ...
+    </ul>
+  </p>
+
+  <p class="align-left">
+    <strong>Стало:</strong>
+    26 использований.
+  </p>
+</section>
