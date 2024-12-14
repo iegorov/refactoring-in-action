@@ -1,0 +1,50 @@
+<div data-markdown>
+  <textarea data-template>
+    ## SRP. Стало
+    ```ts
+      /**
+      * Настраивает зависимости поля "Дата начала периода" от других полей
+      * @private
+      */
+      private initDateFromControlConditions(): void {
+        const dateFromControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateFrom);
+        const dateToControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateTo);
+
+        /**
+        * Подписка на изменения в поле "Дни".
+        * Управляет доступностью поля в зависимости от значения поля "Дни"
+        */
+        this.formGroup
+          .get(SalaryAndDetailFilterFormField.Days)
+          .valueChanges.pipe(takeUntil(this.unsub$))
+          .subscribe((value) => {
+            if (value) {
+              dateFromControl.disable();
+            } else {
+              dateFromControl.enable();
+            }
+          });
+
+        /**
+        * Подписка на изменения в поле "Дата окончания периода"
+        * Обеспечивает корректность диапазона дат
+        */
+        this.formGroup
+          .get(SalaryAndDetailFilterFormField.DateTo)
+          .valueChanges.pipe(takeUntil(this.unsub$))
+          .subscribe(() => {
+            const dateFrom = dateFromControl.value;
+            const dateTo = dateToControl.value;
+
+            if (!dateFrom || !dateTo) {
+              return;
+            }
+            // Если Дата от больше Даты до
+            if (moment(dateFrom).isAfter(dateTo)) {
+              dateFromControl.patchValue(dateTo);
+            }
+          });
+      }
+    ```
+  </textarea>
+</div>

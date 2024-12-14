@@ -1,36 +1,33 @@
 <div data-markdown>
   <textarea data-template>
-    ## SRP. Было
-    ```html
-      <cdek-datepicker
-        (ngModelChange)="onDateFromChange()"
-      >
-      </cdek-datepicker>
-    ```
-    ```ts
-      onDateFromChange(): void {
-        const dateFromControl = this.filterFormGroup.get('dateFrom');
-        const dateToControl = this.filterFormGroup.get('dateTo');
-        if (dateFromControl.value && dateToControl.value) {
-          if (moment(dateFromControl.value) > moment(dateToControl.value)) {
-            dateToControl.patchValue(dateFromControl.value);
-          }
-        }
+    ## Улучшение
+    ```js
+      $scope.ok = () => {
+        $scope.loading = true;
+        $scope.data.problemUuid = problemUuid;
+        $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+
+        const negativeSolutionRequestDto = createNegativeSolutionRequestDto();
+
+        problemDetailService
+            .saveNegativeSolution(negativeSolutionRequestDto)
+        //...
       }
 
-      private onDaysChanged(): void {
-        this.filterFormGroup
-          .get('days')
-          .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
-          .subscribe((value) => {
-            if (value) {
-              this.filterFormGroup.get('dateFrom').disable();
-              this.filterFormGroup.get('dateTo').disable();
-            } else {
-              this.filterFormGroup.get('dateFrom').enable();
-              this.filterFormGroup.get('dateTo').enable();
-            }
-          });
+      /**
+       * Создает параметры для запроса переноса сроков заявки или доставки.
+       */
+      function createNegativeSolutionRequestDto() {
+        const { data, selectedPVZ, priorApprovalDto } = $scope;
+        const priorApproval = { ...priorApprovalDto, ...data.priorApprovalDto };
+        const selectedMassAgreementPreviews = $scope.massAgreementPreviewsGridOptions.api.getSelectedRows();
+
+        return new window.DTO.NegativeSolutionRequestDto({
+          data,
+          selectedPVZ,
+          priorApproval,
+          selectedMassAgreementPreviews,
+        });
       }
     ```
   </textarea>
