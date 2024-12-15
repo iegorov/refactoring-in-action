@@ -1,4 +1,0 @@
-graph TD
-  A[preparation/components/index.ts] --> B[preparation/components/preparation-list-filter/preparation-list-filter.component.ts]
-  B --> C[preparation/services/preparation-controller.service.ts]
-  C --> A[preparation/components/index.ts]

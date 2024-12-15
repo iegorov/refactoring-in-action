@@ -2,23 +2,716 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Refactoring in action</title>
     <style>
       .align-left {
         text-align: left;
       }
     </style>
-    <script type="module" crossorigin src="./assets/main-DRasBHmw.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/main-vON7R2_g.css" />
+    <script type="module" crossorigin src="./assets/main-BmdnEebI.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/main-DIKEvGw4.css">
   </head>
   <body>
     <main class="reveal">
       <div class="slides">
         <section>
-          <h2>Слайды по рефакторингу</h2>
-          <p>В процессе ...</p>
+          <h1>Рефакторинг на практике</h1>
+          <p>Примеры рефакторинга реальных приложений.</p>
         </section>
+
+         <section>
+  <p class="align-left">
+    <strong>Модуль</strong> - это блок приложения, содержащий компоненты,
+    сервисы и модели данных, объединенные общей бизнес-логикой.
+  </p>
+
+  <p class="align-left">
+    <strong>index.ts</strong> - это внешний интерфейс (Public Api) модуля.
+  </p>
+  <p class="align-left">Можно использовать только то, что экспортируется.</p>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Страницы
+    ```bash
+        app/
+      ├── pages/              # Страницы приложения
+      │   ├── adjustments/           # Корректировки
+      │   ├── couriers-salary/      # Зарплаты курьеров
+      │   ├── detail-by-day/        # Детализация по дням
+      │   ├── office-coefficients/  # Коэффициенты офисов
+      │   └── terminal-coefficient/ # Коэффициенты терминалов
+      │
+      ├── shared/             # Общие компоненты и сервисы
+      │   ├── components/          # Переиспользуемые компоненты
+      │   ├── services/           # Общие сервисы
+      │   ├── models/            # Общие модели данных
+      │   └── utils/            # Утилиты
+      │
+      ├── app.component.ts
+      ├── app.component.html
+      ├── app.component.scss
+      ├── app.module.ts       # Главный модуль приложения
+      ├── app-routing.module.ts
+      └── main-menu.ts
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Как было с index.ts
+    ```bash
+      src/
+      └── app/
+          └── pages/
+              └── adjustments/
+                  └── components/
+                      ├── index.ts  (экспортирует все компоненты)
+                      │   - AdjustmentGridComponent
+                      │   - AdjustmentWrapperComponent
+                      │   - AdjustmentFilterComponent
+                      │
+                      ├── adjustment-grid/
+                      │   └── adjustment-grid.component.ts
+                      │
+                      ├── adjustment-wrapper/
+                      │   └── adjustment-wrapper.component.ts
+                      │
+                      └── adjustment-filter/
+                          └── adjustment-filter.component.ts
+    ```
+    Решение: если модуль ничего не экспортирует, то не нужно создавать index.ts
+  </textarea>
+</section>
+  <section>
+  <h2>Low Coupling & High Cohesion</h2>
+
+  <p class="align-left">
+    <strong>Low Coupling (Слабая связность):</strong><br />
+    Модули системы должны быть максимально независимыми друг от друга. Это
+    позволяет легче изменять и тестировать их, минимизируя влияние на другие
+    части системы.
+  </p>
+
+  <p class="align-left">
+    <strong>High Cohesion (Высокая связанность):</strong><br />
+    Компоненты и сервисы внутри одного модуля должны работать над общей задачей,
+    быть тесно связаны по своей логике и функциональности.
+  </p>
+</section>
+  <section>
+  <h2>SharedHttpService</h2>
+
+  <p class="align-left">
+    <strong>Проблема:</strong><br />
+    68 использований в других сервисах и компонентах.
+  </p>
+
+  <p class="align-left">
+    <strong>Решение:</strong>
+    Вынести часть методов в сервисы тесно связанные со страницами (модулями):
+    <ul>
+      <li>courier-schedule-http.service.ts</li>
+      ...
+    </ul>
+  </p>
+
+  <p class="align-left">
+    <strong>Стало:</strong>
+    26 использований.
+  </p>
+</section>
+  <section>
+  <h2>DTO (Data Transfer Object)</h2>
+  <p class="align-left">
+    DTO изолирует формирование данных для конкретного запроса:
+    <ul>
+      <li>Упрощается модификация структуры данных.</li>
+      <li>Легче отлаживать и покрывать тестами, поскольку DTO теперь отвечает только за данные.</li>
+    </ul>
+  </p>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Проблема
+    ```js
+    $scope.ok = () => {
+      $scope.loading = true;
+      const data = {
+        ...$scope.data,
+        deliveryMode: $scope.data.deliveryMode.code,
+      };
+      if ($scope.selectedPVZ?.code) {
+        data.pvzSystemName = $scope.selectedPVZ.code;
+      }
+      $scope.data.problemUuid = problemUuid;
+      $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+      if (!$scope.priorApprovalDto.show) {
+        data.priorApprovalDto = null;
+      } else if (data.priorApprovalDto.address) {
+        data.priorApprovalDto.address = data.priorApprovalDto.address.name
+        ? data.priorApprovalDto.address.name
+        : data.priorApprovalDto.address;
+      }
+      problemDetailService
+          .saveNegativeSolution(negativeSolutionRequestDto)
+      //...
+    }
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Решение
+    ```js
+    $scope.ok = () => {
+        $scope.loading = true;
+        $scope.data.problemUuid = problemUuid;
+        $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+
+        const { data, selectedPVZ, priorApprovalDto } = $scope;
+        const priorApproval = { ...priorApprovalDto, ...data.priorApprovalDto };
+        const selectedMassAgreementPreviews = $scope.massAgreementPreviewsGridOptions.api.getSelectedRows();
+
+        const negativeSolutionRequestDto = new window.DTO.NegativeSolutionRequestDto(
+          data,
+          selectedPVZ,
+          priorApproval,
+          selectedMassAgreementPreviews
+        );
+      problemDetailService
+          .saveNegativeSolution(negativeSolutionRequestDto)
+      //...
+    }
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## DTO
+    ```bash
+      'use strict';
+
+      window.DTO = window.DTO || {};
+      (function defineNegativeSolutionRequestDto() {
+        class NegativeSolutionRequestDto {
+          /**
+          * Идентификатор проблемы
+          * @type {string}
+          */
+          problemUuid;
+
+          /**
+          * Тип отрицательного ответа курьеру
+          * @type {string}
+          */
+          answerKind;
+
+          /**
+          * Ложность проблемы
+          * @type {boolean}
+          */
+          faulty;
+
+          /**
+          * Дата следующего прозвона
+          * @type {string}
+          */
+          nextCallDate;
+
+          /**
+          * Время следующего прозвона
+          * @type {string}
+          */
+          nextCallTime;
+
+          /**
+          * Комментарий для оператора
+          * @type {string}
+          */
+          notesToOperator;
+
+          /**
+          * Комментарий для курьера
+          * @type {string}
+          */
+          notesToCourier;
+
+          /**
+          * Код причины недозвона/отказа от доставки
+          * @type {string}
+          */
+          reason;
+
+          /**
+          * Дата доставки
+          * @type {string}
+          */
+          deliveryDate;
+
+          /**
+          * Время доставки - начало
+          * @type {string}
+          */
+          deliveryStartTime;
+
+          /**
+          * Время доставки до которого нужно выполнить
+          * @type {string}
+          */
+          deliveryEndTime;
+
+          /**
+          * Признак, есть ли обеденный перерыв
+          * @type {boolean}
+          */
+          lunchBreak;
+
+          /**
+          * Обед клиента от
+          * @type {string}
+          */
+          lunchStartTime;
+
+          /**
+          * Обед клиента до
+          * @type {string}
+          */
+          lunchEndTime;
+
+          /**
+          * Адрес заказа
+          * @type {string}
+          */
+          address;
+
+          /**
+          * Пункт выдачи заказа до склада
+          * @type {string}
+          */
+          pvzSystemName;
+
+          /**
+          * Режим доставки до склада/ До двери
+          * @type {string}
+          */
+          deliveryMode;
+
+          /**
+          * Предварительное согласование
+          * @type {?{
+          *   deliveryStartTime: string,
+          *   deliveryEndTime: string,
+          *   lunchBreak: boolean,
+          *   lunchStartTime: string,
+          *   lunchEndTime: string,
+          *   address: string
+          * }}
+          */
+          priorApproval = null;
+
+          /**
+          * Данные для массового согласования проблем
+          * @type {?{
+          *   problemUuids: string[],
+          *   orderUuids: string[]
+          * }}
+          */
+          massAgreementRequest = null;
+
+          constructor(data, selectedPVZ, priorApproval, selectedMassAgreementPreviews) {
+            // Создаем глубокую копию data
+            const {
+              problemUuid,
+              answerKind,
+              faulty,
+              nextCallDate,
+              nextCallTime,
+              notesToOperator,
+              notesToCourier,
+              reason,
+              deliveryDate,
+              deliveryStartTime,
+              deliveryEndTime,
+              lunchBreak,
+              lunchStartTime,
+              lunchEndTime,
+              address,
+              pvzSystemName,
+              deliveryMode,
+            } = data;
+
+            this.problemUuid = problemUuid;
+            this.answerKind = answerKind;
+            this.faulty = faulty;
+            this.nextCallDate = nextCallDate;
+            this.nextCallTime = nextCallTime;
+            this.notesToOperator = notesToOperator;
+            this.notesToCourier = notesToCourier;
+            this.reason = reason;
+            this.deliveryDate = deliveryDate;
+            this.deliveryStartTime = deliveryStartTime;
+            this.deliveryEndTime = deliveryEndTime;
+            this.lunchBreak = lunchBreak;
+            this.lunchStartTime = lunchStartTime;
+            this.lunchEndTime = lunchEndTime;
+            this.address = address;
+            this.pvzSystemName = pvzSystemName;
+            this.deliveryMode = deliveryMode;
+
+            // Устанавливаем pvzSystemName, если выбран PVZ
+            if (selectedPVZ?.code) {
+              this.pvzSystemName = selectedPVZ.code;
+            }
+
+            // Обрабатываем priorApproval
+            if (!priorApproval.show) {
+              this.priorApproval = null;
+            } else if (priorApproval?.address) {
+              this.priorApproval = {
+                address: priorApproval.address.name || priorApproval.address,
+              };
+            }
+
+            // Обрабатываем массовые соглашения
+            if (selectedMassAgreementPreviews?.length) {
+              const problemUuids = selectedMassAgreementPreviews.filter((i) => i.isProblem).map((i) => i.uuid);
+              const orderUuids = selectedMassAgreementPreviews.filter((i) => i.isOrder).map((i) => i.uuid);
+
+              this.massAgreementRequest = {
+                problemUuids,
+                orderUuids,
+              };
+            }
+          }
+        }
+
+        window.DTO.NegativeSolutionRequestDto = NegativeSolutionRequestDto;
+      })();
+    ```
+  </textarea>
+</section>
+  <section>
+  <h2>Single Responsibility Principle (SRP)</h2>
+  <p class="align-left">
+    Принцип единственной ответственности — это буква <strong>S</strong> из
+    SOLID.
+    <br />
+    Он фокусируется на том, чтобы каждый класс, метод или модуль выполнял
+    <strong>только одну задачу</strong> и имел
+    <strong>одну причину для изменения</strong>. Это делает код проще для
+    понимания, тестирования и поддержки.
+  </p>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Улучшение
+    ```js
+      $scope.ok = () => {
+        $scope.loading = true;
+        $scope.data.problemUuid = problemUuid;
+        $scope.data.address = $scope.data.address.name ? $scope.data.address.name : $scope.data.address;
+
+        const negativeSolutionRequestDto = createNegativeSolutionRequestDto();
+
+        problemDetailService
+            .saveNegativeSolution(negativeSolutionRequestDto)
+        //...
+      }
+
+      /**
+       * Создает параметры для запроса переноса сроков заявки или доставки.
+       */
+      function createNegativeSolutionRequestDto() {
+        const { data, selectedPVZ, priorApprovalDto } = $scope;
+        const priorApproval = { ...priorApprovalDto, ...data.priorApprovalDto };
+        const selectedMassAgreementPreviews = $scope.massAgreementPreviewsGridOptions.api.getSelectedRows();
+
+        return new window.DTO.NegativeSolutionRequestDto({
+          data,
+          selectedPVZ,
+          priorApproval,
+          selectedMassAgreementPreviews,
+        });
+      }
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## SRP. Было
+    ```html
+      <cdek-datepicker
+        (ngModelChange)="onDateFromChange()"
+      >
+      </cdek-datepicker>
+    ```
+    ```ts
+      onDateFromChange(): void {
+        const dateFromControl = this.filterFormGroup.get('dateFrom');
+        const dateToControl = this.filterFormGroup.get('dateTo');
+        if (dateFromControl.value && dateToControl.value) {
+          if (moment(dateFromControl.value) > moment(dateToControl.value)) {
+            dateToControl.patchValue(dateFromControl.value);
+          }
+        }
+      }
+
+      private onDaysChanged(): void {
+        this.filterFormGroup
+          .get('days')
+          .valueChanges.pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe((value) => {
+            if (value) {
+              this.filterFormGroup.get('dateFrom').disable();
+              this.filterFormGroup.get('dateTo').disable();
+            } else {
+              this.filterFormGroup.get('dateFrom').enable();
+              this.filterFormGroup.get('dateTo').enable();
+            }
+          });
+      }
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## SRP. Стало
+    ```ts
+      /**
+      * Настраивает зависимости поля "Дата начала периода" от других полей
+      * @private
+      */
+      private initDateFromControlConditions(): void {
+        const dateFromControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateFrom);
+        const dateToControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateTo);
+
+        /**
+        * Подписка на изменения в поле "Дни".
+        * Управляет доступностью поля в зависимости от значения поля "Дни"
+        */
+        this.formGroup
+          .get(SalaryAndDetailFilterFormField.Days)
+          .valueChanges.pipe(takeUntil(this.unsub$))
+          .subscribe((value) => {
+            if (value) {
+              dateFromControl.disable();
+            } else {
+              dateFromControl.enable();
+            }
+          });
+
+        /**
+        * Подписка на изменения в поле "Дата окончания периода"
+        * Обеспечивает корректность диапазона дат
+        */
+        this.formGroup
+          .get(SalaryAndDetailFilterFormField.DateTo)
+          .valueChanges.pipe(takeUntil(this.unsub$))
+          .subscribe(() => {
+            const dateFrom = dateFromControl.value;
+            const dateTo = dateToControl.value;
+
+            if (!dateFrom || !dateTo) {
+              return;
+            }
+            // Если Дата от больше Даты до
+            if (moment(dateFrom).isAfter(dateTo)) {
+              dateFromControl.patchValue(dateTo);
+            }
+          });
+      }
+    ```
+  </textarea>
+</section>
+  <section>
+  <h2>DRY (Don't Repeat Yourself)</h2>
+  <blockquote>Принцип минимизации дублирования кода</blockquote>
+
+  Исключение дублирования позволяет снизить сложность и упростить поддержку
+  кода.
+</section>
+  <section data-markdown>
+  <textarea data-template>
+            ## DRY. Анализ
+            ```bash
+              couriersalaryfront/
+              ├── src/
+              │   ├── app/
+              │   │   ├── pages/
+              │   │   │   ├── adjustments/
+              │   │   │   │   └── components/
+              │   │   │   │       └── adjustment-filter/
+              │   │   │   │           └── multi-select-services/
+              │   │   │   │               ├── brigade-control-multi-select.service.ts
+              │   │   │   │               ├── city-control-multi-select.service.ts
+              │   │   │   │               ├── courier-control-multi-select.service.ts
+              │   │   │   │               └── courier-group-control-multi-select.service.ts
+              │   │   │   │
+              │   │   │   └── couriers-salary/
+              │   │   │       └── components/
+              │   │   │           └── courier-salary-filter/
+              │   │   │               └── multi-select-services/
+              │   │   │                   ├── brigade-control-multi-select.service.ts
+              │   │   │                   ├── city-control-multi-select.service.ts
+              │   │   │                   ├── courier-control-multi-select.service.ts
+              │   │   │                   ├── courier-group-control-multi-select.service.ts
+              │   │   │                   └── subdivision-control-multi-select.service.ts
+            ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## DRY. Анализ
+    BrigadeControlMultiSelectService
+    ```ts
+      getList = (text$: Observable<string>) => {
+        return text$.pipe(
+          debounceTime(200),
+          distinctUntilChanged(),
+          filter((text) => text.length > 0),
+          switchMap((query) =>
+            this.adjustmentsHttp.typeaheadData(query, 'brigades', [
+              {
+                field: 'cityUuids',
+                values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+              },
+              {
+                field: 'officeUuids',
+                values: this.filterFormGroup.get('officeUuids').value?.map((item) => item.code),
+              },
+            ])
+          )
+        );
+      };
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## DRY. Анализ
+    SubdivisionControlMultiSelectService
+    ```ts
+        getList = (text$: Observable<string>) => {
+          return text$.pipe(
+            debounceTime(200),
+            filter((text) => text.length > 0),
+            switchMap((query) =>
+              this.courierSalaryHttp.typeaheadData(query, 'offices', [
+                {
+                  field: 'cityUuids',
+                  values: this.filterFormGroup.get('cityUuids').value?.map((item) => item.code),
+                },
+              ])
+            )
+          );
+        };
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## DRY. Решение
+    AutocompleteService
+    ```ts
+          getDependentTypeahead(
+            formGroup: FormGroup,
+            dictionaryName: string,
+            dependentFields: string[]
+          ): (text$: Observable<string>) => Observable<CodeName<string>[] | OfficeAutocompleteItem[]> {
+            return (text$: Observable<string>) => {
+              return text$.pipe(
+                debounceTime(200),
+                filter((text) => text.length > 0),
+                switchMap((query) => {
+                  const fields = dependentFields.map((fieldName) => ({
+                    field: fieldName,
+                    values: this.extractFieldValues(formGroup.get(fieldName)?.value),
+                  }));
+
+                  return this.getTypeaheadData(TypeaheadApiPath, dictionaryName, query, fields);
+                })
+              );
+            };
+          }
+    ```
+  </textarea>
+</section>
+  <section>
+  <h2>Guard Expression</h2>
+  <p class="align-left">
+    Guard Expression — это техника, при которой проверки условий выносятся в
+    начало функции или метода, чтобы сразу обработать исключительные случаи и
+    уменьшить цикломатическую сложность.
+  </p>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Проблема
+    ```js
+      function urgencyCellRenderer(params) {
+        var icon =
+          '<div style="text-align: center">' +
+          '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' +
+          '</div>';
+        return params.value > 0 ? icon : '';
+      }
+    ```
+  </textarea>
+</section>
+  <section data-markdown>
+  <textarea data-template>
+    ## Решение
+    ```js
+      function urgencyCellRenderer(params) {
+        if (params.value <= 0) {
+          return '';
+        }
+
+        return (
+          '<div style="text-align: center">' +
+          '<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' +
+          '</div>'
+        );
+      }
+    ```
+  </textarea>
+</section>
+  <section>
+  <h2>Circular Dependency</h2>
+
+  <p class="align-left">
+    <strong></strong>Circular Dependency</strong> (циклическая зависимость) возникает, когда два или более модуля зависят друг от друга напрямую или через цепочку зависимостей.
+  </p>
+
+  <p class="align-left">
+    ServiceA зависит от ServiceB.
+    <br>
+    ServiceB зависит от ServiceA.
+  </p>
+</section>
+  <section>
+  <div style="max-width: 700px;">
+    <!-- mermaid.live -->
+    <svg aria-roledescription="flowchart-v2" role="graphics-document document" viewBox="0 0 440.140625 350" style="max-width: 100%;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="graph-div" height="100%"><style>#graph-div{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}#graph-div .error-icon{fill:#552222;}#graph-div .error-text{fill:#552222;stroke:#552222;}#graph-div .edge-thickness-normal{stroke-width:1px;}#graph-div .edge-thickness-thick{stroke-width:3.5px;}#graph-div .edge-pattern-solid{stroke-dasharray:0;}#graph-div .edge-thickness-invisible{stroke-width:0;fill:none;}#graph-div .edge-pattern-dashed{stroke-dasharray:3;}#graph-div .edge-pattern-dotted{stroke-dasharray:2;}#graph-div .marker{fill:#333333;stroke:#333333;}#graph-div .marker.cross{stroke:#333333;}#graph-div svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#graph-div p{margin:0;}#graph-div .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#graph-div .cluster-label text{fill:#333;}#graph-div .cluster-label span{color:#333;}#graph-div .cluster-label span p{background-color:transparent;}#graph-div .label text,#graph-div span{fill:#333;color:#333;}#graph-div .node rect,#graph-div .node circle,#graph-div .node ellipse,#graph-div .node polygon,#graph-div .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#graph-div .rough-node .label text,#graph-div .node .label text,#graph-div .image-shape .label,#graph-div .icon-shape .label{text-anchor:middle;}#graph-div .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#graph-div .rough-node .label,#graph-div .node .label,#graph-div .image-shape .label,#graph-div .icon-shape .label{text-align:center;}#graph-div .node.clickable{cursor:pointer;}#graph-div .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#graph-div .arrowheadPath{fill:#333333;}#graph-div .edgePath .path{stroke:#333333;stroke-width:2.0px;}#graph-div .flowchart-link{stroke:#333333;fill:none;}#graph-div .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#graph-div .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#graph-div .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#graph-div .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#graph-div .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#graph-div .cluster text{fill:#333;}#graph-div .cluster span{color:#333;}#graph-div div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#graph-div .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#graph-div rect.text{fill:none;stroke-width:0;}#graph-div .icon-shape,#graph-div .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#graph-div .icon-shape p,#graph-div .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#graph-div .icon-shape rect,#graph-div .image-shape rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#graph-div :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="graph-div_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="graph-div_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="graph-div_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="graph-div_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="graph-div_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="graph-div_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#graph-div_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M225.457,62L217.303,66.167C209.148,70.333,192.84,78.667,184.686,86.333C176.531,94,176.531,101,176.531,104.5L176.531,108"></path><path marker-end="url(#graph-div_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_1" d="M176.531,214L176.531,218.167C176.531,222.333,176.531,230.667,182.592,238.645C188.653,246.624,200.775,254.247,206.836,258.059L212.897,261.871"></path><path marker-end="url(#graph-div_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_A_2" d="M340.31,264L346.936,259.833C353.561,255.667,366.812,247.333,373.437,230.5C380.063,213.667,380.063,188.333,380.063,163C380.063,137.667,380.063,112.333,372.502,95.803C364.941,79.273,349.82,71.547,342.259,67.683L334.699,63.82"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(278.296875, 35)" id="flowchart-A-18" class="node default"><rect height="54" width="304.8000030517578" y="-27" x="-152.4000015258789" style="" class="basic label-container"></rect><g transform="translate(-122.4000015258789, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="244.8000030517578"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>preparation/components/index.ts</p></span></div></foreignObject></g></g><g transform="translate(176.53125, 163)" id="flowchart-B-19" class="node default"><rect height="102" width="337.0625" y="-51" x="-168.53125" style="" class="basic label-container"></rect><g transform="translate(-138.53125, -36)" style="" class="label"><rect></rect><foreignObject height="72" width="277.0625"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>preparation/components/preparation-list-filter/preparation-list-filter.component.ts</p></span></div></foreignObject></g></g><g transform="translate(278.296875, 303)" id="flowchart-C-21" class="node default"><rect height="78" width="307.6875" y="-39" x="-153.84375" style="" class="basic label-container"></rect><g transform="translate(-123.84375, -24)" style="" class="label"><rect></rect><foreignObject height="48" width="247.6875"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>preparation/services/preparation-controller.service.ts</p></span></div></foreignObject></g></g></g></g></g></svg>
+  </div>
+</section>  <section>
+  <h2>Circular Dependency. Почему это плохо:</h2>
+  <p class="align-left">
+    <ul>
+      <li>Может вызвать ошибки при инъекции зависимостей (DI).</li>
+      <li>Усложняет тестирование и понимание кода.</li>
+      <li>Ухудшает производительность</li>
+      <li>Затрудняет рефакторинг и усложняет поддержку</li>
+    </ul>
+  </p>
+
+  <p class="align-left">
+    Решение: корректно использовать index.ts и выносить общую логику в отдельный сервис.
+  </p>
+</section>
+ 
       </div>
     </main>
   </body>
