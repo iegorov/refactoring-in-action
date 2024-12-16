@@ -13,7 +13,6 @@ export default defineConfig({
           get slides() {
             return getSlides();
           },
-          mainJs: `<script type="module">${fs.readFileSync(path.resolve(__dirname, 'assets/js/main.js'), 'utf-8')}</script>`,
         },
       },
       minify: false,
