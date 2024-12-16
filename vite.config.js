@@ -37,7 +37,7 @@ export default defineConfig({
     hmr: true,
   },
   build: {
-    outDir: 'docs',
+    outDir: 'dist',
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
