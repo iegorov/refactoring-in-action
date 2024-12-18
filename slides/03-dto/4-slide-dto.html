@@ -131,8 +131,14 @@
           */
           massAgreementRequest = null;
 
-          constructor(data, selectedPVZ, priorApproval, selectedMassAgreementPreviews) {
-            // Создаем глубокую копию data
+          /**
+          * @param {Object} params - Параметры для конструктора.
+          * @param {Object} params.data - Объект проблемы.
+          * @param {Object} params.selectedPVZ - Объект выбранного ПВЗ.
+          * @param {Object} params.priorApproval - Объект предварительного согласования.
+          * @param {Array} params.selectedMassAgreementPreviews - Выбранные проблемы и заказы для массового согласования.
+          */
+          constructor({ data, selectedPVZ, priorApproval, selectedMassAgreementPreviews }) {
             const {
               problemUuid,
               answerKind,
