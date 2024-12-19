@@ -1,0 +1,21 @@
+<section>
+  <p class="align-left">
+    Это вызывает ситуацию, где модули ожидают загрузки друг друга, создавая
+    логическую "петлю".
+  </p>
+  <ul>
+    <li>
+      index.ts может экспортировать компоненты, включая
+      PreparationListFilterComponent.
+    </li>
+    <li>
+      Внутри PreparationListFilterComponent есть ссылка на
+      PreparationControllerService.
+    </li>
+    <li>
+      PreparationControllerService, в свою очередь, может использовать что-то из
+      index.ts, например, тот же PreparationListFilterComponent или другой
+      компонент.
+    </li>
+  </ul>
+</section>
