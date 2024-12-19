@@ -1,0 +1,17 @@
+<section data-markdown>
+  <textarea data-template>
+    ## SRP. Стало
+    ```ts
+      /**
+      * Настраивает поведение поля "Дата начала периода" в зависимости от других полей
+      * @private
+      */
+      private initDateFromControlBehavior(): void {
+        // Подписка на изменения в поле "Дни"
+        this.handleDaysFieldChangesForDateFrom();
+        // Подписка на изменения в поле "Дата окончания периода"
+        this.handleDateToFieldChangesForDateFrom();
+      }
+    ```
+  </textarea>
+</section>

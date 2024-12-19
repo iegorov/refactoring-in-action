@@ -1,0 +1,20 @@
+<section data-markdown>
+  <textarea data-template>
+    <strong>Цикломатическая сложность</strong> измеряет количество линейно независимых путей
+    через исходный код программы. Правило <strong>complexity</strong> позволяет
+    установить порог для этой метрики, чтобы контролировать сложность кода.
+
+    ```js
+    /* eslint complexity: ["error", 2] */
+    function a(x) {
+      if (true) {
+          return x; // 1-й путь
+      } else if (false) {
+          return x + 1; // 2-й путь
+      } else {
+          return 4; // 3-й путь
+      }
+    }
+    ```
+  </textarea>
+</section>

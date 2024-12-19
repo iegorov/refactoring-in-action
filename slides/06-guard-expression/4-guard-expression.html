@@ -1,0 +1,23 @@
+<section data-markdown>
+  <textarea data-template>
+    ## Решение
+    ```js
+    function inputValue(val, allowNegative) {
+      if (!val) {
+        return ''; // Путь 1: val отсутствует (равен null или undefined)
+      }
+
+      let replaced = val.replace(/[^0-9,./-]/g, ''); // Путь 2: Выполняется замена всех символов, не соответствующих числам, запятой, точке, слэшу и минусу
+
+      // attr: allow negative
+      if (!allowNegative) {
+        replaced = replaced.replace('-', ''); // Путь 3: Если атрибут allowNegative не равен 'true', удаляем все минусы
+      } else if (replaced.length > 1) {
+        replaced = replaced[0] + replaced.substr(1).replace('-', ''); // Путь 4: Если replaced длиннее одного символа и allowNegative равен 'true', удаляем все минусы, кроме первого
+      }
+
+      return replaced; // Путь 5: Вернуть значение replaced
+    }
+    ```
+  </textarea>
+</section>

@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { getSlides } from './slides-loader.js';
-import fs from 'fs';
 import path from 'path';
 
 export default defineConfig({

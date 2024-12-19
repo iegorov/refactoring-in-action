@@ -3,10 +3,10 @@
     ## SRP. Стало
     ```ts
       /**
-      * Настраивает зависимости поля "Дата начала периода" от других полей
+      * Настраивает поведение поля "Дата начала периода" в зависимости от других полей
       * @private
       */
-      private initDateFromControlConditions(): void {
+      private initDateFromControlBehavior(): void {
         const dateFromControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateFrom);
         const dateToControl = this.formGroup.get(SalaryAndDetailFilterFormField.DateTo);
 
