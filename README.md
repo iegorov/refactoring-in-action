@@ -27,9 +27,25 @@ You can view the presentation online at [https://iegorov.github.io/refactoring-i
 2. Install dependencies:
    ```bash
    npm install
+   ```
 
-3. Start a local server and open `index.html` in your browser. For example, you can use the Live Server extension in VSCode.
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
+## GitHub Pages Deployment
+To deploy your presentation to GitHub Pages:
+
+Ensure your GitHub repository is set up to use the gh-pages branch for deployment.
+Go to the settings of your GitHub repository (Settings).
+In the Pages section, select the gh-pages branch and the / (root) directory for deployment.
+Save the changes.
+
+## Deploy
+   ```bash
+   npm run deploy
+   ```
 ---
 
 **Tags**: `refactoring`, `Reveal.js`, `clean code`, `real-world examples`, `slides`, `developer talks`
